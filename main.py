@@ -9,6 +9,7 @@ from data.users import User
 
 from forms.register import RegisterForm
 from forms.login import LoginForm
+from forms.edit_jobs import JobsForm
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -19,35 +20,6 @@ app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
 def clear_table(table):
     db_sess = db_session.create_session()
     db_sess.query(table).filter().delete()
-    db_sess.commit()
-
-
-def new_person(surname, name, age, position, speciality, address, email):
-    user = User()
-    user.surname = surname
-    user.name = name
-    user.age = age
-    user.position = position
-    user.speciality = speciality
-    user.address = address
-    user.email = email
-
-    db_sess = db_session.create_session()
-    db_sess.add(user)
-    db_sess.commit()
-
-
-def new_job(team_leader, job, work_size, collaborators, start_date=dt.now(), is_finished=False):
-    jobs = Jobs()
-    jobs.team_leader = team_leader
-    jobs.job = job
-    jobs.work_size = work_size
-    jobs.collaborators = collaborators
-    jobs.start_date = start_date
-    jobs.is_finished = is_finished
-
-    db_sess = db_session.create_session()
-    db_sess.add(jobs)
     db_sess.commit()
 
 
@@ -115,6 +87,26 @@ def reqister():
         db_sess.commit()
         return redirect('/login')
     return render_template('register.html', form=form)
+
+
+@app.route('/jobs',  methods=['GET', 'POST'])
+@login_required
+def add_news():
+    form = JobsForm()
+    if form.validate_on_submit():
+        db_sess = db_session.create_session()
+        job = Jobs(
+            team_leader=form.team_leader.data,
+            job=form.job.data,
+            work_size=form.work_size.data,
+            collaborators=form.collaborators.data,
+            is_finished=form.is_finished.data
+        )
+        db_sess.add(job)
+        db_sess.merge(current_user)
+        db_sess.commit()
+        return redirect('/')
+    return render_template('jobs.html', form=form)
 
 
 if __name__ == '__main__':
