@@ -1,11 +1,11 @@
 from datetime import datetime as dt
 
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, request, make_response, session
 
 from data import db_session
 from data.jobs import Jobs
 from data.users import User
-from forms.user_form import RegisterForm
+from forms.register import RegisterForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'yandexlyceum_secret_key'
