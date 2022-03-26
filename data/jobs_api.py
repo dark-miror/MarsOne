@@ -43,7 +43,7 @@ def create_news():
                  ['team_leader', 'job', 'work_size', 'collaborators', 'is_finished']):
         return jsonify({'error': 'Bad request'})
     db_sess = db_session.create_session()
-    if db_sess.query(Jobs).filter(Jobs.id == request.json['id']).all():
+    if db_sess.query(Jobs).get(request.json['id']):
         return jsonify({'error': 'ID already exists'})
     job = Jobs(
         id=request.json['id'],
@@ -54,5 +54,16 @@ def create_news():
         is_finished=request.json['is_finished'],
     )
     db_sess.add(job)
+    db_sess.commit()
+    return jsonify({'success': 'OK'})
+
+
+@blueprint.route('/api/news/<int:jobs_id>', methods=['DELETE'])
+def delete_news(jobs_id):
+    db_sess = db_session.create_session()
+    job = db_sess.query(Jobs).get(jobs_id)
+    if not job:
+        return jsonify({'error': 'Not found'})
+    db_sess.delete(job)
     db_sess.commit()
     return jsonify({'success': 'OK'})
