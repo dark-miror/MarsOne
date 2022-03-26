@@ -49,11 +49,11 @@ print(post('http://localhost:5000/api/jobs',
 # проверим, что работа добавилась
 pprint(get('http://localhost:5000/api/jobs').json())
 
-# новости с id = 999 нет в базе
-print(delete('http://localhost:5000/api/news/999').json())
+# работы с id = 999 нет в базе
+print(delete('http://localhost:5000/api/jobs/999').json())
 
 # верное удаление
-print(delete('http://localhost:5000/api/news/2').json())
+print(delete('http://localhost:5000/api/jobs/2').json())
 
 # проверим, что работа удалилась
 pprint(get('http://localhost:5000/api/jobs').json())
